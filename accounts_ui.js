@@ -4,6 +4,7 @@ if (!Accounts.ui)
 if (!Accounts.ui._options) {
 	Accounts.ui._options = {
 		requestPermissions: {},
+        requestOfflineToken: {},
 		extraSignupFields: []
 	};
 }
@@ -53,6 +54,20 @@ Accounts.ui.config = function(options) {
 				Accounts.ui._options.requestPermissions[service] = scope;
 			}
 		});
+    }
+
+    // deal with `requestOfflineToken`
+    if (options.requestOfflineToken) {
+        _.each(options.requestOfflineToken, function (value, service) {
+            if (service !== 'google')
+                throw new Error("Accounts.ui.config: `requestOfflineToken` only supported for Google login at the moment.");
+
+            if (Accounts.ui._options.requestOfflineToken[service]) {
+                throw new Error("Accounts.ui.config: Can't set `requestOfflineToken` more than once for " + service);
+            } else {
+                Accounts.ui._options.requestOfflineToken[service] = value;
+            }
+        });
     }
 
     if (options.extraSignupFields) {
